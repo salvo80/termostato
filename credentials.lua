@@ -1,1 +1,1 @@
-SSID="";PASSWORD=""
+SSID="TISCALI_63E5";PASSWORD=".Sony.Coccinella.01"

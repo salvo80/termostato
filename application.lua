@@ -10,33 +10,30 @@ if file.open("conf.lua") ~= nil then
 end
 
 -- listening mqtt (temperature='t', wifi credentials='w')
-function eval_mqtt_w (client)
-	print(client)
+function eval_mqtt(client, topic, message)
 	if client ~= "iot" then
 		if topic == "w" then
+			print("credentials: "..topic.." "..message)
 			local cre = file.open("credentials.lua","w")
 			cre.write(message)
 			cre.close()
 		end
-	end
-end
-function eval_mqtt_t (client)
-	print(client)
-	if client ~= "iot" then
 		if topic == "t" then
+			print("temperature: "..topic.." "..message)
 			temperature = message
 		end
 	end
 end
-function onConnect(client) 
+function onConnect() 
 	print("connected") 
 	--m:on(event, evalMQTT)
 	m:subscribe("w",0, eval_mqtt_w)
 	m:subscribe("t",0, eval_mqtt_t)
 end
 m = mqtt.Client("iot", 120, "fhnmelxv", "GVyrRJ7jSVxg")
-m:connect("farmer.cloudmqtt.com", 15778, false, onConnect, function(client, reason)print(reason)end)
-
+m:connect("farmer.cloudmqtt.com", 15778, 0)
+m:on("connect", function()end)
+m:on("message", eval_mqtt)
 function updateConfig()
 	local conf = file.open("conf.lua","w")
 	conf.write("temperature="..temperature)
