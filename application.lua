@@ -11,29 +11,25 @@ end
 
 -- listening mqtt (temperature='t', wifi credentials='w')
 function eval_mqtt(client, topic, message)
-	if client ~= "iot" then
-		if topic == "w" then
-			print("credentials: "..topic.." "..message)
-			local cre = file.open("credentials.lua","w")
-			cre.write(message)
-			cre.close()
-		end
-		if topic == "t" then
-			print("temperature: "..topic.." "..message)
-			temperature = message
-		end
+	print("eval_mqtt")
+	print(topic)
+	print(message)
+	if topic == "tx" then
+		print("temperature: "..topic.." "..message)
+		temperature = message
+		onTempChange()
+	end
+	if topic == "wx" then
+		print("credentials: "..topic.." "..message)
+		local cre = file.open("credentials.lua","w")
+		cre.write(message)
+		cre.close()
 	end
 end
-function onConnect() 
-	print("connected") 
-	--m:on(event, evalMQTT)
-	m:subscribe("w",0, eval_mqtt_w)
-	m:subscribe("t",0, eval_mqtt_t)
-end
-m = mqtt.Client("iot", 120, "fhnmelxv", "GVyrRJ7jSVxg")
-m:connect("farmer.cloudmqtt.com", 15778, 0)
-m:on("connect", function()end)
-m:on("message", eval_mqtt)
+m = mqtt.Client("termostato", 120, "fhnmelxv", "GVyrRJ7jSVxg")
+m:connect("farmer.cloudmqtt.com", 15778, false)
+m:on("connect", function() m:subscribe({wx=0,tx=0}, eval_mqtt) end)
+m:on("message", function(client, topic, message) eval_mqtt(client, topic, message) end)
 function updateConfig()
 	local conf = file.open("conf.lua","w")
 	conf.write("temperature="..temperature)
@@ -43,7 +39,6 @@ end
 function onTempChange()
 	doRefreshDisplay()
 	updateConfig()
-	m:publish("t", temperature, 0, 0)
 end
 
 -- listening pins
@@ -62,6 +57,7 @@ end
 function triggerPIN(level, when, eventcount, value)
      temperature = temperature + value
 	 onTempChange()
+	 m:publish("t", temperature, 0, 0)
 end
 --gpio.trig(PIN_PLUS, "high", triggerPIN_PLUS)
 --gpio.trig(PIN_MINUS, "high", triggerPIN_MINUS)
