@@ -1,0 +1,21 @@
+https://nodemcu-build.com/
+
+moduli: bit?, crypto*, file, GPIO, HTTP*, I2C, MQTT, net, timer, U8G2, UART, WIFI
+display: sdd1306_i2c_128x64_noname
+LFS:e 0, SPIFFS base 1024kb, size all free flash
+TLS/SSL support enabled
+
+u8g2_font_6x10_tr
+u8g2_font_inr16_mf
+u8g2_font_inr24_mf
+u8g2_font_unifont_t_symbols
+
+This was built against the master branch and includes the following modules: bit, crypto, file, gpio, http, i2c, mqtt, net, tmr, u8g2, uart, wifi, tls.
+
+115200
+4Mb
+40mhz
+DIO
+
+?= non so se serve
+*= ancora non utilizzato

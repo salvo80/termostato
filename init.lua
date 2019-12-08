@@ -1,6 +1,8 @@
 -- load credentials, 'SSID' and 'PASSWORD' declared and initialize in there
 dofile("credentials.lua")
 
+home_tmp = {}
+
 function startup()
     if file.open("init.lua") == nil then
         print("init.lua deleted or renamed")
